@@ -1,0 +1,19 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+train_dataset:
+  dataset_opts: 
+    _target_: lib.dataset.depth_estimation.hypersim_mini.Dataset
+    split_path: ${oc.env:workspace}/processed_datasets/hypersim_mini/metadata.json
+    width: 640
+    height: 480
+    resize_target: True
+    split: 'train'
+val_dataset:
+  dataset_opts:
+    _target_: lib.dataset.depth_estimation.hypersim_mini.Dataset
+    split_path: ${oc.env:workspace}/processed_datasets/hypersim_mini/metadata.json
+    width: 640
+    height: 480
+    resize_target: True
+    split: 'val'
+train_loader_opts:
+  batch_size: 4

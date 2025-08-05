@@ -1,0 +1,30 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+train_dataset:
+  dataset_opts: 
+    _target_: lib.dataset.depth_estimation.shift.Dataset
+    data_root: ${oc.env:workspace}/datasets/shift
+    split_path: ${oc.env:workspace}/processed_datasets/shift/train_split.json
+    split: 'train'
+    frames: [0, -1, 1]
+    transforms:
+      - _target_: lib.dataset.depth_estimation.transform.Resize
+        ensure_multiple_of: 14
+        height: 630
+        width: 630
+        resize_target: True
+      - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+val_dataset:
+  dataset_opts:
+    _target_: lib.dataset.depth_estimation.shift.Dataset
+    data_root: ${oc.env:workspace}/datasets/shift
+    split_path: ${oc.env:workspace}/processed_datasets/shift/val_split.json
+    split: 'val'
+    frames: [0, -1, 50]
+    transforms:
+      - _target_: lib.dataset.depth_estimation.transform.Resize
+        ensure_multiple_of: 14
+        height: 812
+        width: 1288
+      - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+train_loader_opts:
+  batch_size: 1

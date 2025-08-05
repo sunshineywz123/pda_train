@@ -1,0 +1,108 @@
+# @package _global_
+defaults:
+  - override /data: depth_estimation/train_hypersim_test_hypersim_arkitscenes
+  - override /model@model: depth_estimation/marigold
+  - override /callbacks: 
+    - model_checkpoint_simple
+    - train_speed_timer
+
+pl_trainer:
+  precision: 32
+  limit_train_batches: 10000
+  limit_val_batches: 100
+  max_epochs: 100
+  log_every_n_steps: 50
+  accumulate_grad_batches: 1 # * 8 if use only one gpu
+  num_sanity_val_steps: -1
+  check_val_every_n_epoch: 5
+
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: ${output_dir} # /save_dir/name/version/sub_dir
+  name: ""
+  version: "tb" # merge name and version
+
+task: depth_estimation
+exp_name: marigold_upsample_noise
+
+data:
+  loader_opts:
+    train:
+      batch_size: 2
+      num_workers: 4
+      shuffle: True
+      persistent_workers: True
+      pin_memory: True
+
+model:
+  pipeline:
+    _target_: lib.model.depth_estimation.marigold.marigold_upsample.MarigoldUpsamplePipeline
+    zerosft:
+      _target_: lib.model.mde.utils.zerosft.ZeroSFT
+      label_nc: 5
+      norm_nc: 4
+    range_ratio: [0.5, 0.3, 0.2] # 8x, 192x256, 8x--192x256
+    noise_model:
+      _target_: lib.model.depth_estimation.noise.noise_diffusion.NoiseDiffusion
+      ckpt_path: ${oc.env:workspace}/cache_models/lidar_noise/e2652-s440398.ckpt
+      pipeline:
+        _target_: lib.model.lidarerr.diffusion.diffusion_pipeline.DiffusionPipeline
+        args:
+          predict_dpt: True
+          scheduler_opt_train: # Always DDPM
+            _class_name: "DDPMScheduler"
+            _diffusers_version: "0.8.0"
+            beta_end: 0.012
+            beta_schedule: "scaled_linear"
+            beta_start: 0.00085
+            clip_sample: False
+            num_train_timesteps: 1000
+            prediction_type: "v_prediction"
+            # set_alpha_to_one: False
+            # skip_prk_steps: True
+            steps_offset: 1
+            trained_betas: null
+          scheduler_opt_test:
+            _class_name: "DDIMScheduler"
+            _diffusers_version: "0.8.0"
+            beta_end: 0.012
+            beta_schedule: "scaled_linear"
+            beta_start: 0.00085
+            clip_sample: False
+            num_train_timesteps: 1000
+            prediction_type: "v_prediction"
+            set_alpha_to_one: False
+            # skip_prk_steps: True
+            steps_offset: 1
+            trained_betas: null
+          unet_opt:
+            _class_name: "UNet"
+            _diffusers_version: "0.20.1"
+            act_fn: "silu"
+            attention_head_dim: [5, 10, 20, 20]
+            block_out_channels: [128, 256, 512, 512]
+            center_input_sample: false
+            cross_attention_dim: 1024
+            down_block_types: ["DownBlock2D", "DownBlock2D", "DownBlock2D", "CrossAttnDownBlock2D"]
+            downsample_padding: 1
+            dual_cross_attention: false
+            flip_sin_to_cos: true
+            freq_shift: 0
+            in_channels: 6
+            layers_per_block: 2
+            mid_block_scale_factor: 1
+            norm_eps: 1e-05
+            norm_num_groups: 32
+            out_channels: 3
+            sample_size: 96
+            up_block_types: ["CrossAttnUpBlock2D", "UpBlock2D", "UpBlock2D", "UpBlock2D"] 
+            use_linear_projection: true
+          tokenizer_opt:
+            config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/tokenizer
+          textencoder_opt:
+            config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/text_encoder
+        
+
+
+
+

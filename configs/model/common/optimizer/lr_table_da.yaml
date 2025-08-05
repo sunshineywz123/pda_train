@@ -1,0 +1,4 @@
+_target_: lib.utils.lr_table.LRTable
+default_lr: 5e-5
+else_table:
+  pretrained: 5e-6

@@ -1,0 +1,97 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+train_dataset:
+  dataset_opts: 
+    - _target_: lib.dataset.depth_estimation.hypersim_v3.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+      dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+      split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+      split: 'train'
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 14
+          width: 1008
+          height: 756
+          resize_target: True
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+        - _target_: lib.dataset.depth_estimation.transform.SimLowRes
+          height: 192
+          width: 256
+    - _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+      split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/train_meta_data_meshdepth_0614.json'
+      split: 'train'
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 14
+          width: 1008
+          height: 756
+          resize_target: True
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+    - _target_: lib.dataset.depth_estimation.arkitscenes_v3.Dataset
+      data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+      meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+      split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/train.txt
+      split: 'train'
+      frames: [0, -1, 1]
+      rotate: ['Up']
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 14
+          width: 1008
+          height: 756
+          resize_target: True
+        - _target_: lib.dataset.depth_estimation.transform.Rotate
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+    - _target_: lib.dataset.depth_estimation.human_gps_render.Dataset
+      split_file: data/pl_htcode/processed_datasets/human_gps_render/train.json
+      split: 'train'
+      frames: [0, -1, 1]
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+        - _target_: lib.dataset.depth_estimation.transform.Crop
+          size: [134, 8, 890, 1016] # centercrop
+        - _target_: lib.dataset.depth_estimation.transform.SimLowRes
+          height: 192
+          width: 256
+val_dataset:
+  dataset_opts:
+    - _target_: lib.dataset.depth_estimation.human_gps_render.Dataset
+      split_file: data/pl_htcode/processed_datasets/human_gps_render/val.json
+      split: 'val'
+      frames: [0, -1, 20]
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+        - _target_: lib.dataset.depth_estimation.transform.Crop
+          size: [134, 8, 890, 1016] # centercrop
+        - _target_: lib.dataset.depth_estimation.transform.SimLowRes
+          height: 192
+          width: 256
+    - _target_: lib.dataset.depth_estimation.arkitscenes_v3.Dataset
+      data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+      meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+      split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/val.txt
+      split: 'val'
+      frames: [0, -1, 20]
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 14
+          width: 1008
+          height: 756
+          resize_target: True
+        - _target_: lib.dataset.depth_estimation.transform.Rotate
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+    - _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+      split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/test_meta_data_meshdepth_0614.json'
+      split: 'val'
+      frames: [0, -1, 20]
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 14
+          width: 1008
+          height: 756
+          resize_target: True
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+  loader_opts:
+    - batch_size: 1
+    - batch_size: 1
+    - batch_size: 1

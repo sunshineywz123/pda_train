@@ -1,0 +1,4 @@
+model: GCN
+n_epoches: 3
+lr: 5e-4
+batch_size: 512

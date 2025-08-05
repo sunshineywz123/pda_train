@@ -1,0 +1,6 @@
+# @package _global_
+
+defaults:
+  - marigold/marigold
+  - override /data: dpt/hypersim_vkitti_log
+exp_name: marigold_log

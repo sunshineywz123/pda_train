@@ -1,0 +1,95 @@
+# 可以在 merlin 创建任务页面拷贝参数或者参考文档: https://cloud.bytedance.net/bam/rd/lab.rh2.frontend_prod/api_doc/show_doc?cluster=default&x-resource-account=public&api_branch=master&endpoint_id=1731594 
+caption: '[Repo] linhaotong/pl_htcode'
+jobDefVersion:
+  apt:
+    - libgl1-mesa-glx
+  entrypointFullScript: /bin/bash /mnt/bn/haotongdata/home/linhaotong/envs/debug/launch.sh sleep infinity
+  entrypointMode: FULL_SCRIPT
+  env:
+    ARNOLD_HDFS_NATIVE: "true"
+    ARNOLD_ICM_BUILD_REGION: China-North-LF
+    HYDRA_FULL_ERROR: "1"
+    ICCV_CODE_PATH: /mnt/bn/haotongdata/home/linhaotong/projects/pl_htcode
+    workspace: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode
+    ENV_HOME_PATH: /mnt/bn/haotongdata/home/linhaotong/envs
+  gitRepo:
+    branchName: master
+    commitSha: 8b35c98c836beb26eda957697a52cd7c52456151
+    mnt: /mlx/users/linhaotong/repo/9203/pl_htcode
+    repoName: linhaotong/pl_htcode # 代码仓库
+  imageMeta:
+    imageSource: url
+    imageUrl: hub.byted.org/arnold/iccv.bykang.test:287516d464f8119c1d304bc3fd7a1de3 # 镜像url，可从MLX镜像中心或ICM上粘贴获取
+    # imageUrl: hub.byted.org/reckon/data.reckon.mlx.image_7027:3ab5a4fa697b55b18b8ad1a800143ccb
+  lazyDownloadCode: true
+  name: '[Repo] linhaotong/pl_htcode'
+  pip3:
+    - hydra-colorlog
+    - hydra-core
+    - lightning==2.1.3
+    - imageio>=2.33.1
+    - Pillow>=10.1.0
+    - imageio-ffmpeg
+    - einops
+    - diffusers[torch]
+    - transformers
+    - termcolor
+    - rich
+    - tensorboardX
+    - numpy==1.26.4
+    - opencv-python==4.9.0.80
+    - scipy
+    - matplotlib
+    - timm
+    - scikit-learn
+    - pandas
+  resource:
+    arnoldConfig:
+      bytenasVolumes:
+        - accessMode: RW
+          name: haotongdata
+          roles: # arnold worker配置, 为数组结构，平台默认生成首个worker配置，如果需要多机多卡训练，请自行添加修改
+            - worker
+        - accessMode: RW
+          name: haotongdata3
+          roles: # arnold worker配置, 为数组结构，平台默认生成首个worker配置，如果需要多机多卡训练，请自行添加修改
+            - worker
+        - accessMode: RO
+          name: liheyang
+          roles: # arnold worker配置, 为数组结构，平台默认生成首个worker配置，如果需要多机多卡训练，请自行添加修改
+            - worker
+      clusterId: 17 # arnold集群id，可以从arnold集群页面的网页链接中获取, https://arnold.byted.org/v2/cluster
+      elasticTraining: {}
+      groupIds: # arnold用户组id, 可以从arnold用户组界面获取, https://arnold.byted.org/v2/group
+        - 281
+      keepMins: 15 # 训练失败后保留时间长度，默认15mins
+      queuePriority: 40
+      quotaPool: default
+      roles: # arnold worker配置, 为数组结构，平台默认生成首个worker配置，如果需要多机多卡训练，请自行添加修改
+        - cpu: 88
+          gpu: 8
+          memory: 327680
+          name: worker
+          num: 1
+          ports: 1 # 需要预留端口数，后续预留端口从环境变量中获取
+    backend: ARNOLD # 资源类型，平台限定为arnold，请勿更改
+  scms:
+    - mnt: /opt/tiger/arnold/arnold_entrypoint
+      name: dlp/dlp_entrypoint
+      version: 1.0.0.1279
+    - mnt: /opt/tiger/opt/tiger/arnold_toolbox
+      name: lab/arnold/toolbox
+      version: 1.0.0.687
+    - mnt: /opt/tiger/debug
+      name: iccv/bykang/debug
+      version: 1.0.0.10
+jobRunParams:
+  entrypointFullScript: /bin/bash /mnt/bn/haotongdata/home/linhaotong/envs/debug/launch.sh sleep infinity
+  envsList:
+    ARNOLD_HDFS_NATIVE: "true"
+    ARNOLD_ICM_BUILD_REGION: China-North-LF
+    HYDRA_FULL_ERROR: "1"
+    ICCV_CODE_PATH: /mnt/bn/haotongdata/home/linhaotong/projects/pl_htcode
+    workspace: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode
+    HTCODE_WARN: "1"
+namespace: /topic/c714523f57cb8cbb # 业务线

@@ -1,0 +1,5 @@
+# @package _global_
+defaults:
+  - marigold/marigold
+  - override /data: dpt/tartanair_hypersim_vkitti_disp
+exp_name: marigold_disp_tartanair

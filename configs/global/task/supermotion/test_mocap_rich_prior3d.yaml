@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - override /data: supermotion3d/TEST_Rich
+  - override /callbacks: null
+  - _self_
+
+task: test
+
+# utilities in the entry file
+# will not override previous setting if already set
+ckpt_path: ???
+ckpt_type: pl
+
+# Callbacks
+callbacks:
+  metric_mocap:
+    _target_: lib.model.supermotion.callbacks.metric_mocap.MetricMocap
+
+# lightning utilities
+pl_trainer:
+  devices: 1
+logger: null

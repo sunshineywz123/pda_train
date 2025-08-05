@@ -1,0 +1,15 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+val_dataset:
+  dataset_opts:
+    _target_: lib.dataset.depth_estimation.mycapture_v3_dyn.Dataset
+    data_root: /mnt/bn/haotongdata/Datasets/mycapture_stray_scanner
+    scene: 20240728_seq1
+    split: val
+    frames: [0, -1, 60]
+    transforms:
+      - _target_: lib.dataset.depth_estimation.transform.Resize
+        ensure_multiple_of: 14
+        width: 1008
+        height: 756
+        resize_target: True
+      - _target_: lib.dataset.depth_estimation.transform.PrepareForNet

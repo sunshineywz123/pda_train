@@ -1,0 +1,21 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+name: dpt # uncondition
+dataset_opts:
+  train:
+    _target_: lib.dataset.stereo.diml.Dataset
+    data_root: ${oc.env:workspace}/DIML/train/LR
+    split: 'train'
+    frames: [0, -1, 1]
+  val:
+    _target_: lib.dataset.stereo.diml.Dataset
+    data_root: ${oc.env:workspace}/DIML/test/LR
+    split: 'test'
+    frames: [0, -1, 1]
+loader_opts:
+  train:
+    batch_size: 2
+    num_workers: 12
+    max_iter: 10000
+  val:
+    batch_size: 1
+    num_workers: 12

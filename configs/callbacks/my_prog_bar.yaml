@@ -1,0 +1,3 @@
+prog_bar:
+  _target_: lib.utils.callbacks.prog_bar.MyTQDMProgressBar
+  refresh_rate: 1

@@ -1,0 +1,46 @@
+# @package _global_
+defaults:
+  - override /data: depth_estimation/shift_comp_fovcrop_apollo
+  - override /model@model: depth_estimation/depth_anything
+  - override /callbacks: 
+    - model_checkpoint_simple
+    - train_speed_timer
+
+pl_trainer:
+  precision: 32
+  limit_train_batches: 2000
+  limit_val_batches: 256
+  max_epochs: 100
+  log_every_n_steps: 50
+  accumulate_grad_batches: 1 # * 8 if use only one gpu
+  strategy: ddp_find_unused_parameters_true
+  devices: 8
+
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: ${output_dir} # /save_dir/name/version/sub_dir
+  name: ""
+  version: "tb" # merge name and version
+
+task: depth_estimation
+exp_name: aug_shift_comp_baseline_new_lidar_precomp_fov_sparse_lidar_minmax_min_apollo_cspnpost
+
+model:
+  pipeline:
+    _target_: lib.model.depth_estimation.depth_anything.depth_anything_upsample_fusion.DepthAnythingPipeline
+    range_ratio: [1., 0., 0.] # 8x, 192x256, 8x--192x256
+    block_type: 'featurefusiondepthblock'
+    load_pretrain_backbone: null
+    load_pretrain_net: ${oc.env:workspace}/cache_models/depth_anything/checkpoints/v2_model_metric_ft_shift_minmax_fov.ckpt
+    normalize_disp_type: minmax
+    cspn: True
+    add_grad: True
+    grad_tags: ['shift']
+    random_use_sparse: 0.1 # default = 0.
+    loss_cfg:
+      _target_: lib.model.depth_estimation.depth_anything.loss.L1Logloss_Gradient_upsample
+      gradient_weight: 0.
+    warp_func:
+      _target_: lib.model.depth_estimation.depth_anything.depth_warp.WarpFixMinMax
+      near_depth: 1.
+      far_depth: 80.

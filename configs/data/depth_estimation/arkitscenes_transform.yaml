@@ -1,0 +1,31 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  train:
+    _target_: lib.dataset.depth_estimation.arkitscenes_transform.Dataset
+    data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+    meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+    split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/train.txt
+    split: 'train'
+    frames: [0, -1, 1]
+    rotate: 'all'
+  val:
+    _target_: lib.dataset.depth_estimation.arkitscenes_transform.Dataset
+    data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+    meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+    split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/val.txt
+    split: 'val'
+    frames: [0, -1, 20]
+    rotate: 'all'
+loader_opts:
+  train:
+    batch_size: 2
+    num_workers: 4
+    shuffle: True
+    persistent_workers: False
+    pin_memory: True
+  val:
+    batch_size: 1
+    num_workers: 4
+    shuffle: False
+    persistent_workers: True
+    pin_memory: True

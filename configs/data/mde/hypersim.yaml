@@ -1,0 +1,24 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  train:
+    _target_: lib.dataset.mde.hypersim.Dataset
+    data_root: ${oc.env:workspace}/hypersim
+    split: 'train'
+    holdout: 8
+    frames: [0, -1, 1]
+    depth_norm: 'nonorm'
+    resize_ratio: 0.625
+  val:
+    _target_: lib.dataset.mde.nyuv2_val.Dataset
+    data_root: ${oc.env:workspace}/nyu_v2_test
+    split: 'test'
+    frames: [0, -1, 20]
+    depth_norm: 'nonorm'
+loader_opts:
+  train:
+    batch_size: 8
+    num_workers: 12
+    max_iter: 10000
+  val:
+    batch_size: 1
+    num_workers: 12

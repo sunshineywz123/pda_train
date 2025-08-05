@@ -1,0 +1,69 @@
+defaults:
+  - _self_
+
+# Pipeline module path
+_target_: lib.model.mvs.naive_pipeline.MarigoldPipeline
+
+args:
+  # Scheduler for training
+  scheduler_opt_train: # Always DDPM
+    _class_name: "DDPMScheduler"
+    _diffusers_version: "0.8.0"
+    beta_end: 0.012
+    beta_schedule: "scaled_linear"
+    beta_start: 0.00085
+    clip_sample: False
+    num_train_timesteps: 1000
+    prediction_type: "v_prediction"
+    # set_alpha_to_one: False
+    # skip_prk_steps: True
+    steps_offset: 1
+    trained_betas: null
+
+  # Scheduler for testing
+  scheduler_opt_test:
+    _class_name: "DDIMScheduler"
+    _diffusers_version: "0.8.0"
+    beta_end: 0.012
+    beta_schedule: "scaled_linear"
+    beta_start: 0.00085
+    clip_sample: False
+    num_train_timesteps: 1000
+    prediction_type: "v_prediction"
+    set_alpha_to_one: False
+    # skip_prk_steps: True
+    steps_offset: 1
+    trained_betas: null
+
+  # UNet configurations, core!
+  unet_opt:
+    _target_: 3rdparty.main.diffmvs.unet.DiffMVSUnetModel
+    image_size: [60, 80] # unused
+    in_channels: 8 # 4 target latent image + 4 noise depth map
+    # in_channels: 14 # 4 target latent image + 6 plucker embeddings + 4 noise depth map, # TODO: determine this
+    out_channels: 4
+    model_channels: 320
+    attention_resolutions: [4, 2, 1]
+    num_res_blocks: 2
+    channel_mult: [1, 2, 4, 4]
+    num_heads: 8
+    use_spatial_transformer: True
+    transformer_depth: 1
+    context_dim: 320
+    use_checkpoint: False
+    legacy: False
+    ckpt_path: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/ldm_unet_spad_four_views/diffusion_pytorch_model.bin
+    # # TODO: debug, use this as the original Marigold to see if it works
+    # config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/unet
+
+  # Stable diffusion v2 pretrained VAE config, diffusers
+  vae_opt:
+    config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/vae
+
+  # Stable diffusion v2 pretrained tokenizer config, diffusers, no use of it
+  tokenizer_opt:
+    config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/tokenizer
+
+  # Stable diffusion v2 pretrained text encoder config, diffusers, no use of it
+  textencoder_opt:
+    config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/text_encoder

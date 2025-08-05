@@ -1,0 +1,38 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  train:
+    _target_: lib.dataset.depth_estimation.hypersim_transform.Dataset
+    data_root: ${oc.env:workspace}/hypersim
+    rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+    dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+    split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+    split: 'train_test'
+    scene: ai_001_010
+    frames: [0, -1, 1]
+    train_crop_size: -1
+    width: 1008
+    height: 756
+  val:
+    _target_: lib.dataset.depth_estimation.hypersim_transform.Dataset
+    data_root: ${oc.env:workspace}/hypersim
+    rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+    dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+    split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+    split: 'test'
+    scene: ai_001_010
+    frames: [0, -1, 30]
+    width: 1008
+    height: 756
+loader_opts:
+  train:
+    batch_size: 1
+    num_workers: 4
+    shuffle: True
+    persistent_workers: True
+    pin_memory: True
+  val:
+    batch_size: 1
+    num_workers: 4
+    shuffle: False
+    persistent_workers: True
+    pin_memory: True

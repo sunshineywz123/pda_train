@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - override /data: lidarerr/arkitscenes
+  - override /model: lidarerr/dpt
+  - override /callbacks: 
+    - model_checkpoint_simple
+    - train_speed_timer
+
+pl_trainer:
+  precision: 16-mixed
+  limit_val_batches: 200
+  max_epochs: 100
+  log_every_n_steps: 50
+  accumulate_grad_batches: 1
+
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: ${output_dir} # /save_dir/name/version/sub_dir
+  name: ""
+  version: "tb" # merge name and version
+
+task: lidarerr
+exp_name: baseline

@@ -1,0 +1,15 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  val:
+    _target_: lib.dataset.depth_estimation.nyu.Dataset
+    data_root: ${oc.env:workspace}/datasets/nyu
+    split_path: nyu_test.txt
+    split: val
+    frames: [0, -1, 20]
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 4
+    shuffle: False
+    persistent_workers: True
+    pin_memory: True

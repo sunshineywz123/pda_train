@@ -1,0 +1,19 @@
+_target_: lib.datamodule.generalizable.GeneralizableDataModule
+
+dataset_opts:
+  val:
+    _target_: lib.dataset.mvs.multi_view_dataset.MultiViewDataset
+    data_root: ${oc.env:workspace}/middlebury/train
+    split: 'VAL'
+    ratio: 1.0
+    view_sample: [0, null, 1]
+    skip_loading_images: False
+    sampler_view_sample: [0, null, 2] # only test the left views
+    depth_norm: 'SIMP'
+    n_srcs_list: [1]
+    source_type: 'DISTANCE' # always the right view
+
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 12

@@ -1,0 +1,29 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  train:
+    _target_: lib.dataset.mde.hypersim_byte.Dataset
+    data_root: ${oc.env:workspace}/hypersim
+    rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+    dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+    split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+    split: 'train'
+    frames: [0, -1, 1]
+    depth_norm: 'nonorm'
+    resize_ratio: 0.625
+  val:
+    _target_: lib.dataset.mde.hypersim_byte.Dataset
+    data_root: ${oc.env:workspace}/hypersim
+    rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+    dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+    split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+    split: 'test'
+    frames: [0, -1, 30]
+    depth_norm: 'nonorm'
+    resize_ratio: 0.625
+loader_opts:
+  train:
+    batch_size: 6
+    num_workers: 12
+  val:
+    batch_size: 1
+    num_workers: 12

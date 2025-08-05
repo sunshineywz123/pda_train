@@ -1,0 +1,16 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+name: dpt # uncondition
+concat_independent: True
+dataset_opts:
+  val:
+    _target_: lib.dataset.dpt.hypersim.Dataset
+    data_root: ${oc.env:workspace}/hypersim
+    split: 'test'
+    holdout: 8
+    frames: [0, -1, 100]
+    depth_norm: 'nonorm'
+    resize_ratio: 0.625
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 12

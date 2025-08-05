@@ -1,0 +1,11 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+name: dpt # uncondition
+dataset_opts:
+  val:
+    _target_: lib.dataset.dpt.example.Dataset
+    data_root: ${oc.env:workspace}/dynibar_release/kid-running/dense/images_512x288
+    split: 'val'
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 8

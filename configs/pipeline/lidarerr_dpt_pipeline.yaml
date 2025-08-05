@@ -1,0 +1,8 @@
+defaults:
+  - _self_
+_target_: lib.model.lidarerr.dpt.dpt_pipeline.DPTPipeline
+dpt_args:
+  path: null
+  scale: 1.
+  shift: 0.
+  invert: False

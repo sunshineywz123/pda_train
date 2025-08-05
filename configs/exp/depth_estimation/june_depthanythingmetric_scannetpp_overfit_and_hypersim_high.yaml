@@ -1,0 +1,92 @@
+# @package _global_
+defaults:
+  - override /data: depth_estimation/scannetpp_hypersim_zipnerf
+  - override /model@model: depth_estimation/depth_anything
+  - override /callbacks: 
+    - model_checkpoint_simple
+    - train_speed_timer
+
+pl_trainer:
+  precision: 32
+  limit_train_batches: 5000
+  limit_val_batches: 100
+  max_epochs: 100
+  log_every_n_steps: 50
+  accumulate_grad_batches: 1 # * 8 if use only one gpu
+  strategy: ddp_find_unused_parameters_true
+  devices: 8
+
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: ${output_dir} # /save_dir/name/version/sub_dir
+  name: ""
+  version: "tb" # merge name and version
+
+task: depth_estimation
+# exp_name: may_depthanything_vits_arkitscenes_silog
+exp_name: june_depthanythingmetric_scannetpp_overfit_and_hypersim_high
+
+# data:
+#   loader_opts:
+#     train:
+#       - batch_size: 2
+#         num_workers: 4
+#       - batch_size: 2
+#         num_workers: 4
+model:
+  pipeline:
+    _target_: lib.model.depth_estimation.depth_anything.depth_anything_upsample_fusion.DepthAnythingPipeline
+    range_ratio: [1., 0., 0.] # 8x, 192x256, 8x--192x256
+    block_type: 'featurefusiondepthblock'
+    load_pretrain_backbone: null
+    load_pretrain_net: ${oc.env:workspace}/cache_models/depth_anything/checkpoints/v2_model_metric_ftlht.ckpt
+    normalize_disp_type: minmax
+    loss_cfg:
+      _target_: lib.model.depth_estimation.depth_anything.loss.L1loss_Gradient_upsample
+      gradient_weight: 0.5
+
+data:
+  dataset_opts:
+    train:
+      - _target_: lib.dataset.depth_estimation.hypersim_transform.Dataset
+        data_root: ${oc.env:workspace}/hypersim
+        rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+        dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+        split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+        split: 'train'
+        frames: [0, -1, 1]
+        train_crop_size: 630
+      - _target_: lib.dataset.depth_estimation.scannetpp_zipnerf.Dataset
+        data_root: ${oc.env:workspace}/datasets/scannetpp/data
+        scene: 56a0ec536c
+        split: train
+        frames: [0, -1, 1]
+        ensure_multiple_of: 14
+        train_crop_size: 1260
+        resize_target: False
+    val:
+      _target_: lib.dataset.depth_estimation.scannetpp_zipnerf.Dataset
+      data_root: ${oc.env:workspace}/datasets/scannetpp/data
+      scene: 56a0ec536c
+      split: val
+      frames: [0, -1, 40]
+      ensure_multiple_of: 14
+      resize_target: False
+  loader_opts:
+    train:
+      - batch_size: 1
+        num_workers: 4
+        shuffle: True
+        persistent_workers: True
+        pin_memory: False
+      - batch_size: 1
+        num_workers: 4
+        shuffle: True
+        persistent_workers: True
+        pin_memory: False
+    val:
+      batch_size: 1
+      num_workers: 4
+      shuffle: False
+      persistent_workers: True
+      pin_memory: True

@@ -1,0 +1,133 @@
+arnold:
+  batchsize: null
+  bytedrive: []
+  bytenas:
+  - arnoldvolumeid: null
+    name: haotongdata
+    nasvolumeid: null
+    readonly: false
+    role:
+    - worker
+    subpath: null
+  - arnoldvolumeid: null
+    name: liheyang
+    nasvolumeid: null
+    readonly: true
+    role:
+    - worker
+    subpath: null
+  clusterid: 17
+  enablebatchserver: null
+  enableray: null
+  enabletensorboard: null
+  entrypoint: /bin/bash /opt/tiger/debug/launch.sh sleep infinity
+  env:
+    ARNOLD_HDFS_NATIVE: true
+    ARNOLD_ICM_BUILD_REGION: China-North-LF
+    HYDRA_FULL_ERROR: 1
+    ICCV_CODE_PATH: /mnt/bn/haotongdata/home/linhaotong/projects/pl_htcode
+    workspace: /mnt/bn/haotongdata/home/linhaotong/workspaces/htcode
+  gpuv: null
+  hybrid: false
+  identity: null
+  image:
+    arnoldtaskid: null
+    url: hub.byted.org/reckon/data.reckon.mlx.image_4751:0886ec615719d247972dadbdd949e07c
+  isdebug: null
+  keepmins: 15
+  maskhosts: []
+  needreportfault: null
+  packages:
+  - dynamicinstall: true
+    name: libgl1-mesa-glx
+    packagetype: apt
+  - dynamicinstall: true
+    name: hydra-colorlog
+    packagetype: pip3
+  - dynamicinstall: true
+    name: hydra-core
+    packagetype: pip3
+  - dynamicinstall: true
+    name: lightning==2.1.3
+    packagetype: pip3
+  - dynamicinstall: true
+    name: imageio>=2.33.1
+    packagetype: pip3
+  - dynamicinstall: true
+    name: Pillow>=10.1.0
+    packagetype: pip3
+  - dynamicinstall: true
+    name: imageio-ffmpeg
+    packagetype: pip3
+  - dynamicinstall: true
+    name: einops
+    packagetype: pip3
+  - dynamicinstall: true
+    name: diffusers[torch]
+    packagetype: pip3
+  - dynamicinstall: true
+    name: transformers
+    packagetype: pip3
+  - dynamicinstall: true
+    name: termcolor
+    packagetype: pip3
+  - dynamicinstall: true
+    name: rich
+    packagetype: pip3
+  - dynamicinstall: true
+    name: tensorboardX
+    packagetype: pip3
+  - dynamicinstall: true
+    name: numpy==1.26.4
+    packagetype: pip3
+  - dynamicinstall: true
+    name: opencv-python==4.9.0.80
+    packagetype: pip3
+  - dynamicinstall: true
+    name: scipy
+    packagetype: pip3
+  - dynamicinstall: true
+    name: matplotlib
+    packagetype: pip3
+  - dynamicinstall: true
+    name: timm
+    packagetype: pip3
+  - dynamicinstall: true
+    name: scikit-learn
+    packagetype: pip3
+  - dynamicinstall: true
+    name: pandas
+    packagetype: pip3
+  preemptible: false
+  profiler: null
+  quotapool: null
+  roleconfig:
+  - cpu: 88
+    gpu: 8
+    gpuv: TESLA_V100_SXM2_32GB
+    mem: 262144
+    num: 1
+    numelastic: null
+    ports: 1
+    role: worker
+  scmrepo:
+  - dynamicinstall: null
+    ispythonpath: null
+    name: dlp/dlp_entrypoint
+    path: /opt/tiger/arnold/arnold_entrypoint
+    remoteid: null
+    version: 1.0.0.1279
+  - dynamicinstall: null
+    ispythonpath: null
+    name: lab/arnold/toolbox
+    path: /opt/tiger/opt/tiger/arnold_toolbox
+    remoteid: null
+    version: 1.0.0.687
+  - dynamicinstall: null
+    ispythonpath: null
+    name: iccv/bykang/debug
+    path: /opt/tiger/debug
+    remoteid: null
+    version: 1.0.0.10
+  usergroupid: 281
+resourcetype: arnold

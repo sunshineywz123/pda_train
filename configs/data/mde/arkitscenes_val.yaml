@@ -1,0 +1,12 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  val:
+    _target_: lib.dataset.mde.arkitscenes.Dataset
+    data_root: ${oc.env:workspace}/ARKitScenes/download/upsampling/Validation
+    split: 'val'
+    frames: [0, -1, 1]
+    depth_norm: 'nonorm'
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 12

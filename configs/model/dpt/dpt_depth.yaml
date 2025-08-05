@@ -1,0 +1,12 @@
+defaults:
+  - /pipeline: dpt_pipeline 
+  - common/optimizer@optimizer: adam_1e-5
+  - common/scheduler_cfg@scheduler_cfg: null
+
+_target_: lib.model.dpt.dpt_model.DptDepthModel
+
+args:
+  seed: ${seed}
+  rng_type: seed_plus_idx # [const, random, seed_plus_idx]
+  output_dir: ${output_dir}/results
+  save_tag: ${save_tag}

@@ -1,0 +1,53 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+train_dataset:
+  combined_loader_opts:
+    mode: max_size_cycle
+  dataset_opts: 
+    - _target_: lib.dataset.depth_estimation.hypersim_v3.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+      dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+      split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+      split: 'train'
+      width: 1008
+      height: 756
+      resize_target: True
+      ensure_multiple_of: 14
+    - _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+      split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/train_meta_data_0619.json'
+      split: 'train'
+      width: 1008
+      height: 756
+      resize_target: True
+      ensure_multiple_of: 14
+  loader_opts: 
+    - batch_size: 1
+    - batch_size: 1
+    
+# val_dataset:
+#   dataset_opts:
+#     _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+#     split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/test_meta_data_0619.json'
+#     split: 'val'
+#     frames: [0, -1, 25]
+#     transforms:
+#       - _target_: lib.dataset.depth_estimation.transform.Resize
+#         ensure_multiple_of: 14
+#         width: 1008
+#         height: 756
+#         resize_target: True
+#       - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+
+val_dataset:
+  dataset_opts:
+    _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+    split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/test_meta_data_meshdepth_0614.json'
+    split: 'val'
+    frames: [0, -1, 25]
+    transforms:
+      - _target_: lib.dataset.depth_estimation.transform.Resize
+        ensure_multiple_of: 14
+        width: 1008
+        height: 756
+        resize_target: True
+      - _target_: lib.dataset.depth_estimation.transform.PrepareForNet

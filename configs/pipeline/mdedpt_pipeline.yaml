@@ -1,0 +1,12 @@
+defaults:
+  - _self_
+_target_: lib.model.mde.dpt.dpt_pipeline.DPTPipeline
+dpt_args:
+  path: null
+  scale: 1.
+  shift: 0.
+  invert: False
+loss_args:
+  _target_: lib.model.mde.loss.sil_loss.SILogLoss
+  
+

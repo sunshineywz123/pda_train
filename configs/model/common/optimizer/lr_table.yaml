@@ -1,0 +1,2 @@
+_target_: lib.utils.lr_table.LRTable
+default_lr: 1e-4

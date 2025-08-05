@@ -1,0 +1,17 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  val:
+    _target_: lib.dataset.depth_estimation.mycapture_stray_scanner.Dataset
+    data_root: ${oc.env:workspace}/datasets/mycapture_stray_scanner
+    scene: 31f344e86e
+    split: val
+    frames: [0, -1, 60]
+    ensure_multiple_of: 14
+    resize_target: False
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 4
+    shuffle: False
+    persistent_workers: True
+    pin_memory: True

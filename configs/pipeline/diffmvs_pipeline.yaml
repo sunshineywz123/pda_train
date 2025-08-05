@@ -1,0 +1,58 @@
+defaults:
+  - _self_
+
+# Pipeline module path
+_target_: lib.model.mvs.marigold_pipeline.MarigoldPipeline
+
+args:
+  # Scheduler for training
+  scheduler_opt_train: # Always DDPM
+    _class_name: "DDPMScheduler"
+    _diffusers_version: "0.8.0"
+    beta_end: 0.012
+    beta_schedule: "scaled_linear"
+    beta_start: 0.00085
+    clip_sample: False
+    num_train_timesteps: 1000
+    prediction_type: "v_prediction"
+    # set_alpha_to_one: False
+    # skip_prk_steps: True
+    steps_offset: 1
+    trained_betas: null
+
+  # Scheduler for testing
+  scheduler_opt_test:
+    _class_name: "DDIMScheduler"
+    _diffusers_version: "0.8.0"
+    beta_end: 0.012
+    beta_schedule: "scaled_linear"
+    beta_start: 0.00085
+    clip_sample: False
+    num_train_timesteps: 1000
+    prediction_type: "v_prediction"
+    set_alpha_to_one: False
+    # skip_prk_steps: True
+    steps_offset: 1
+    trained_betas: null
+
+  # UNet configurations, core!
+  unet_opt:
+    config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/unet_init_13ch # stable diffusion v2 unet
+
+  # Stable diffusion v2 pretrained VAE config, diffusers
+  vae_opt:
+    config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/vae
+
+  # Stable diffusion v2 pretrained tokenizer config, diffusers, no use of it
+  tokenizer_opt:
+    config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/tokenizer
+
+  # Stable diffusion v2 pretrained text encoder config, diffusers, no use of it
+  textencoder_opt:
+    config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/text_encoder
+
+  # Cost volume condition configs
+  cost_volume:
+    matching_height: 56
+    matching_width: 80
+    num_depth_bins: 64

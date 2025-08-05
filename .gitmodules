@@ -1,0 +1,3 @@
+[submodule "trdparties/ZoeDepth"]
+	path = trdparties/ZoeDepth
+	url = git@github.com:haotongl/ZoeDepth.git

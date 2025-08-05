@@ -1,0 +1,101 @@
+# @package _global_
+defaults:
+  - override /data: depth_estimation/kitti_comp
+  - override /model@model: depth_estimation/depth_anything
+  - override /callbacks: 
+    - model_checkpoint_simple
+    - train_speed_timer
+
+pl_trainer:
+  precision: 32
+  limit_train_batches: 1000
+  limit_val_batches: 100
+  max_epochs: 200
+  log_every_n_steps: 50
+  accumulate_grad_batches: 1 # * 8 if use only one gpu
+  strategy: ddp_find_unused_parameters_true
+  devices: 8
+
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: ${output_dir} # /save_dir/name/version/sub_dir
+  name: ""
+  version: "tb" # merge name and version
+
+task: depth_estimation
+exp_name: aug_hypersim_kitti
+
+model:
+  pipeline:
+    _target_: lib.model.depth_estimation.depth_anything.depth_anything_upsample_fusion.DepthAnythingPipeline
+    range_ratio: [1., 0., 0.] # 8x, 192x256, 8x--192x256
+    block_type: 'featurefusiondepthblock'
+    # encoder: 'vits'
+    # features: 64
+    # out_channels: [48, 96, 192, 384]
+    load_pretrain_backbone: null
+    load_pretrain_net: ${oc.env:workspace}/cache_models/depth_anything/checkpoints/v2_model_metric_ftlht.ckpt
+    normalize_disp_type: minmax
+    add_grad: False
+    # grad_tags: ['HyperSim']
+    grad_tags: ['HyperSim', 'vkitti']
+    loss_cfg:
+      _target_: lib.model.depth_estimation.depth_anything.loss.L1Logloss_Gradient_upsample
+      gradient_weight: 2.
+    warp_func:
+      _target_: lib.model.depth_estimation.depth_anything.depth_warp.WarpMinMax
+
+# data:
+#   _target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+#   train_dataset:
+#     dataset_opts: 
+#       - _target_: lib.dataset.depth_estimation.hypersim_v3.Dataset
+#         data_root: ${oc.env:workspace}/hypersim
+#         rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+#         dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+#         split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+#         split: 'train'
+#         transforms:
+#           - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+#           - _target_: lib.dataset.depth_estimation.transform.Crop
+#             size: 518
+#           - _target_: lib.dataset.depth_estimation.transform.SimLowRes
+#             ranges: [84, 160]
+#             range_prob: [0.05, 0.9, 0.05]
+#             use_bi: False
+#             interpolation: 'random_simu'
+#       - _target_: lib.dataset.depth_estimation.kitti_completion.Dataset
+#         data_root: ${oc.env:workspace}/datasets/kitti_completion
+#         split_path: ${oc.env:workspace}/processed_datasets/kitti/train_split.json
+#         split: 'train'
+#         transforms:
+#           - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+#           - _target_: lib.dataset.depth_estimation.transform.Crop
+#             size: 364
+#             down_scale: 1
+#           - _target_: lib.dataset.depth_estimation.transform.CompLowRes
+#   val_dataset:
+#     dataset_opts:
+#       # _target_: lib.dataset.depth_estimation.kitti_completion.Dataset
+#       # data_root: ${oc.env:workspace}/datasets/kitti_completion
+#       # split_path: ${oc.env:workspace}/processed_datasets/kitti/val_split.json
+#       # split: 'val'
+#       # transforms:
+#       #   - _target_: lib.dataset.depth_estimation.transform.Resize
+#       #     ensure_multiple_of: 14
+#       #     height: 364
+#       #     width: 1232
+#       #   - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+#       #   - _target_: lib.dataset.depth_estimation.transform.CompLowRes
+#       _target_: lib.dataset.depth_estimation.kitti_completion.Dataset
+#       data_root: ${oc.env:workspace}/datasets/kitti_completion
+#       split_path: ${oc.env:workspace}/processed_datasets/kitti/test_split.json
+#       split: 'val'
+#       frames: [0, -1, 1]
+#       transforms:
+#         - _target_: lib.dataset.depth_estimation.transform.Resize
+#           ensure_multiple_of: 14
+#           height: 364
+#           width: 1218
+#         - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+#         - _target_: lib.dataset.depth_estimation.transform.CompLowRes

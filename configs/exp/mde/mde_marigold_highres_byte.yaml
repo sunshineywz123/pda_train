@@ -1,0 +1,62 @@
+# @package _global_
+defaults:
+  - override /data: mde/hypersim_byte
+  - override /model: mde/mde_marigold
+  - override /callbacks: 
+    - model_checkpoint_simple
+    - train_speed_timer
+
+pl_trainer:
+  precision: 16-mixed
+  limit_train_batches: 10000
+  limit_val_batches: 100
+  max_epochs: 100
+  log_every_n_steps: 50
+  accumulate_grad_batches: 4 # * 8 if use only one gpu
+
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: ${output_dir} # /save_dir/name/version/sub_dir
+  name: ""
+  version: "tb" # merge name and version
+
+task: mde
+exp_name: mde_marigold_highres_byte
+
+
+model:
+  pipeline:
+    args:
+      unet_opt:
+        config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/unet # stable diffusion v2 unet
+
+data:
+  dataset_opts:
+    train:
+      _target_: lib.dataset.mde.hypersim_byte.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+      dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+      split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+      split: 'train'
+      frames: [0, -1, 1]
+      depth_norm: 'nonorm'
+      resize_ratio: 1.
+    val:
+      _target_: lib.dataset.mde.hypersim_byte.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+      dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+      split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+      split: 'test'
+      frames: [0, -1, 30]
+      depth_norm: 'nonorm'
+      resize_ratio: 1.
+  loader_opts:
+    train:
+      batch_size: 2
+      num_workers: 12
+    val:
+      batch_size: 1
+      num_workers: 12
+    

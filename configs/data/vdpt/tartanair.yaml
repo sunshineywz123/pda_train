@@ -1,0 +1,26 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+name: dpt # uncondition
+concat_independent: False
+dataset_opts:
+  train:
+    _target_: lib.dataset.vdpt.tartanair.Dataset
+    data_root: ${oc.env:workspace}/TartanAir/train
+    split: 'train'
+    frames: [0, -1, 1]
+    depth_norm: 'simp'
+    frame_len: 4 # 2*frame_len + 1
+  val:
+    _target_: lib.dataset.vdpt.tartanair.Dataset
+    data_root: ${oc.env:workspace}/TartanAir/train
+    split: 'train'
+    frames: [0, -1, 100000000000]
+    depth_norm: 'simp'
+    frame_len: 5 # 2*frame_len + 1
+loader_opts:
+  train:
+    batch_size: 2 # 80GB GPU, A100
+    num_workers: 12
+    max_iter: 10000
+  val:
+    batch_size: 1
+    num_workers: 1

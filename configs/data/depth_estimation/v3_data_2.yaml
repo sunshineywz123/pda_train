@@ -1,0 +1,45 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+train_dataset:
+  dataset_opts: 
+    - _target_: lib.dataset.depth_estimation.hypersim_transform.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+      dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+      split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+      split: 'train'
+      max_length: 10000
+      frames: [0, -1, 1]
+    - _target_: lib.dataset.depth_estimation.hypersim_transform.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+      dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+      split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+      split: 'train'
+      max_length: 10000
+      frames: [0, -1, 1]
+  loader_opts: 
+    batch_size: 4
+    
+
+val_dataset:
+  dataset_opts:
+    - _target_: lib.dataset.depth_estimation.hypersim_v3.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+      dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+      split_path: ${oc.env:workspace}/processed_datasets/HyperSim/metadata_valid_0.05_splits_ht.json
+      split: 'val'
+      width: 1008
+      height: 756
+      resize_target: True
+      frames: [0, -1, 25]
+    - _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+      split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/test_meta_data.json'
+      split: 'val'
+      width: 1008
+      height: 756
+      resize_target: True
+      frames: [0, -1, 25]
+  loader_opts:
+    - batch_size: 1
+    - batch_size: 1

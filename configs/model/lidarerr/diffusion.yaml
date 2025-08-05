@@ -1,0 +1,13 @@
+defaults:
+  - /pipeline: lidarerr_diffusion_pipeline 
+  - common/optimizer@optimizer: adamw_1e-4
+  - common/scheduler_cfg@scheduler_cfg: null
+
+_target_: lib.model.lidarerr.lidarerr_model.LidarErrModel
+lr_table:
+    _target_: lib.utils.lr_table.LRTable
+    default_lr: 1e-4
+args:
+  output_dir: ${output_dir}/results
+  save_tag: ${save_tag}
+  

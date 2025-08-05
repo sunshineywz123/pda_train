@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - marigold/marigold
+  - override /data: dpt/tartanair_disp
+exp_name: marigold_only_tartanair
+
+data:
+  dataset_opts:
+    train:
+      depth_norm: simp
+    val:
+      depth_norm: nonorm

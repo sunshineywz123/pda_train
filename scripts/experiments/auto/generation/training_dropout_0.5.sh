@@ -1,0 +1,2 @@
+export dropout_prob=0.5
+python3 main.py exp=depth_estimation/depth_anything_upsample_featurefusion_l1 pl_trainer.devices=8 exp_name=dropout_05

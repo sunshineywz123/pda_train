@@ -1,0 +1,12 @@
+defaults:
+  - /pipeline: marigold_pipeline 
+  - common/optimizer@optimizer: adamw_1e-5
+  - common/scheduler_cfg@scheduler_cfg: null
+
+_target_: lib.model.marigold.marigold_model.MarigoldModel
+
+args:
+  seed: ${seed}
+  rng_type: seed_plus_idx # [const, random, seed_plus_idx]
+  output_dir: ${output_dir}/results
+  save_tag: ${save_tag}

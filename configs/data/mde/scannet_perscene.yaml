@@ -1,0 +1,12 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  val:
+    _target_: lib.dataset.mde.scannetpp.Dataset
+    data_root: ${oc.env:workspace}/scannetpp_download/data
+    split: 'val'
+    depth_norm: 'nonorm'
+    scene_id: 98b4ec142f
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 12

@@ -1,0 +1,6 @@
+# @package _global_
+
+callbacks:
+  wis3d_motion_logger:
+    _target_: lib.model.supermotion.callbacks.wis3d_prog_motion.ProgMotionLogger
+    name: ${exp_name}

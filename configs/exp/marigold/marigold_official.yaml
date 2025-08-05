@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - marigold/marigold
+
+exp_name: marigold_official
+model:
+  pipeline:
+    args:
+      unet_opt: 
+        config_dir:  ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/unet

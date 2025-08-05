@@ -1,0 +1,36 @@
+_target_: lib.datamodule.generalizable.GeneralizableDataModule
+
+dataset_opts:
+  train:
+    _target_: lib.dataset.mvs.multi_view_dataset.MultiViewDataset
+    meta_roots:
+      - ${oc.env:workspace}/hypersim_evc/test/ai_001_010
+    split: 'TRAIN'
+    ratio: 0.625
+    view_sample: [0, null, 1]
+    skip_loading_images: True
+    depth_norm: 'SIMP'
+    use_cached_srcs: True
+    n_srcs_list: [2,]
+  val:
+    _target_: lib.dataset.mvs.multi_view_dataset.MultiViewDataset
+    data_root: ${oc.env:workspace}/hypersim_evc/test/ai_001_010/00
+    split: 'VAL'
+    ratio: 0.625
+    view_sample: [0, null, 1]
+    skip_loading_images: False
+    sampler_view_sample: [0, null, 20]
+    depth_norm: 'SIMP'
+    use_cached_srcs: True
+    n_srcs_list: [2,]
+    # near: 0.1
+    # far: 8.5
+
+loader_opts:
+  train:
+    batch_size: 2
+    num_workers: 12
+    max_iter: 10000
+  val:
+    batch_size: 2
+    num_workers: 12

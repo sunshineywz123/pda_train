@@ -1,0 +1,18 @@
+defaults:
+  - /model/common/optimizer@optimizer: adamw_5e-5
+  - /model/common/optimizer@lr_table: lr_table
+  - /model/common/scheduler_cfg@scheduler_cfg: null
+_target_: lib.model.depth_estimation.depth_estimation_model.DepthEstimationModel
+output_dir: ${output_dir}/results
+save_orig_pred: False
+save_vis_depth: True
+save_vis_depth_and_concat_img: True
+compute_abs_metric: True
+compute_rel_metric: True
+ransac_align_depth: True
+
+lr_table:
+  default_lr: 5e-5
+
+pipeline:
+  _target_: lib.model.depth_estimation.mspf.mspf.MSPF

@@ -1,0 +1,46 @@
+# @package _global_
+defaults:
+  - override /data: depth_estimation/train_hypersim_arkitscenes_test_arkitscenes
+  - override /model@model: depth_estimation/depth_anything
+  - override /callbacks: 
+    - model_checkpoint_simple
+    - train_speed_timer
+
+pl_trainer:
+  precision: 32
+  limit_train_batches: 5000
+  limit_val_batches: 100
+  max_epochs: 100
+  log_every_n_steps: 50
+  accumulate_grad_batches: 1 # * 8 if use only one gpu
+  strategy: ddp_find_unused_parameters_true
+  devices: 8
+
+logger:
+  _target_: pytorch_lightning.loggers.TensorBoardLogger
+  save_dir: ${output_dir} # /save_dir/name/version/sub_dir
+  name: ""
+  version: "tb" # merge name and version
+
+task: depth_estimation
+# exp_name: may_depthanything_vits_arkitscenes_silog
+exp_name: may_depthanything_vits_hypersim_arkitscenes_minmax
+
+data:
+  loader_opts:
+    train:
+      - batch_size: 2
+        num_workers: 4
+      - batch_size: 2
+        num_workers: 4
+model:
+  pipeline:
+    _target_: lib.model.depth_estimation.depth_anything.depth_anything_upsample_fusion.DepthAnythingPipeline
+    range_ratio: [1., 0., 0.] # 8x, 192x256, 8x--192x256
+    block_type: 'featurefusiondepthblock'
+    encoder: 'vits'
+    features: 64
+    out_channels: [48, 96, 192, 384]
+    load_pretrain_backbone: null
+    load_pretrain_net: /mnt/bn/liheyang/model_zoo/v2_vits_518_joint.pth
+    normalize_disp_type: minmax

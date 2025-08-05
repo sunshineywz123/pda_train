@@ -1,0 +1,22 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+train_dataset:
+  dataset_opts: 
+    _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+    split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/train_meta_data_0614.json'
+    split: 'train'
+    width: 1008
+    height: 756
+    resize_target: True
+    ensure_multiple_of: 14
+val_dataset:
+  dataset_opts:
+    _target_: lib.dataset.depth_estimation.scannetpp_v3.Dataset
+    split_path: '/mnt/bn/haotongdata/Datasets/scannetpp/splits/test_meta_data_0614.json'
+    split: 'val'
+    width: 1008
+    height: 756
+    resize_target: True
+    frames: [0, -1, 25]
+    ensure_multiple_of: 14
+train_loader_opts:
+  batch_size: 2

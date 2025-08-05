@@ -1,0 +1,1 @@
+python main.py exp=marigold/marigold_disp pl_trainer.devices=8 pl_trainer.precision=16-mixed pl_trainer.accumulate_grad_batches=1 data.loader_opts.train.batch_size=4 +pl_trainer.use_distributed_sampler=False

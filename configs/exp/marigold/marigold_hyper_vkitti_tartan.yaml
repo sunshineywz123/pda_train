@@ -1,0 +1,5 @@
+# @package _global_
+defaults:
+  - marigold/marigold
+  - override /data: dpt/hyper_vkitti_tartan
+exp_name: marigold_hyper_vkitti_tartan

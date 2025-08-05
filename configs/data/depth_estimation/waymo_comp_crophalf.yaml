@@ -1,0 +1,19 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+val_dataset:
+  dataset_opts:
+    _target_: lib.dataset.depth_estimation.waymo.Dataset
+    data_root: ${oc.env:workspace}/datasets/waymo
+    split_path: ${oc.env:workspace}/processed_datasets/waymo/002.json
+    split: 'val'
+    frames: [0, -1, 1]
+    transforms:
+      - _target_: lib.dataset.depth_estimation.transform.Resize
+        ensure_multiple_of: 14
+        height: 420
+        width: 630
+        resize_target: True
+      - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+      - _target_: lib.dataset.depth_estimation.transform.CompLowRes
+      - _target_: lib.dataset.depth_estimation.transform.Crop
+        size: [196, 0, 420, 630]
+        down_scale: 1

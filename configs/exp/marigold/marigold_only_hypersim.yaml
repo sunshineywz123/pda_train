@@ -1,0 +1,13 @@
+# @package _global_
+
+defaults:
+  - marigold/marigold
+  - override /data: dpt/hypersim_disp
+exp_name: marigold_only_hypersim
+
+data:
+  dataset_opts:
+    train:
+      depth_norm: simp
+    val:
+      depth_norm: nonorm

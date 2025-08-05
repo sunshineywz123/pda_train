@@ -1,0 +1,33 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+name: dpt # uncondition
+concat_independent: True
+dataset_opts:
+  train:
+    - _target_: lib.dataset.dpt.hypersim.Dataset
+      data_root: ${oc.env:workspace}/hypersim
+      split: 'train'
+      holdout: 8
+      frames: [0, -1, 1]
+      depth_norm: 'disp'
+      resize_ratio: 0.625
+    - _target_: lib.dataset.dpt.vkitti.Dataset
+      data_root: ${oc.env:workspace}/vkitti
+      split: 'train'
+      scenes: ['Scene01', 'Scene02', 'Scene06', 'Scene18', 'Scene20']
+      sequences: ['15-deg-left', '15-deg-right', '30-deg-left', '30-deg-right', 'clone', 'morning', 'overcast', 'sunset']
+      frames: [0, -1, 1]
+      depth_norm: 'disp'
+  val:
+    _target_: lib.dataset.dpt.nyuv2_val.Dataset
+    data_root: ${oc.env:workspace}/nyu_v2_test
+    split: 'test'
+    frames: [0, -1, 20]
+    depth_norm: 'disp'
+loader_opts:
+  train:
+    batch_size: 4
+    num_workers: 12
+    max_iter: 10000
+  val:
+    batch_size: 1
+    num_workers: 12

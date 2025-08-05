@@ -1,0 +1,10 @@
+defaults:
+  - _self_
+_target_: lib.model.mde.dino_dpt.dinodpt_pipeline.DPTPipeline
+dpt_args: 
+  encoder: 'vitl'
+  localhub: False
+loss_args:
+  _target_: lib.model.mde.loss.sil_loss.SILogLoss
+  
+

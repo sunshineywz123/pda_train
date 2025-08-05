@@ -1,0 +1,68 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+val_dataset:
+  dataset_opts:
+    # - _target_: lib.dataset.depth_estimation.arkitscenes_v3.Dataset
+    #   data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+    #   meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+    #   split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/val.txt
+    #   split: 'val'
+    #   frames: [0, -1, 10]
+    #   transforms:
+    #     - _target_: lib.dataset.depth_estimation.transform.Resize
+    #       ensure_multiple_of: 14
+    #       width: 504
+    #       height: 378
+    #       resize_target: True
+    #     - _target_: lib.dataset.depth_estimation.transform.Rotate
+    #     - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+    - _target_: lib.dataset.depth_estimation.arkitscenes_v3.Dataset
+      data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+      meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+      split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/val.txt
+      split: 'val'
+      frames: [0, -1, 1]
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 1
+          width: 1024
+          height: 768
+          resize_target: True
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 14
+          width: 1024
+          height: 768
+          resize_target: False
+        - _target_: lib.dataset.depth_estimation.transform.Rotate
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+    - _target_: lib.dataset.depth_estimation.arkitscenes_v3.Dataset
+      data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+      meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+      split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/val.txt
+      split: 'val'
+      frames: [0, -1, 1]
+      transforms:
+        - _target_: lib.dataset.depth_estimation.transform.Resize
+          ensure_multiple_of: 14
+          width: 1008
+          height: 756
+          resize_target: True
+        - _target_: lib.dataset.depth_estimation.transform.Rotate
+        - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+
+    # - _target_: lib.dataset.depth_estimation.arkitscenes_v3.Dataset
+    #   data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+    #   meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+    #   split_file: /mnt/bn/haotongdata/home/linhaotong/workspaces/pl_htcode/processed_datasets/ARKitScenes/val.txt
+    #   split: 'val'
+    #   frames: [0, -1, 10]
+    #   transforms:
+    #     - _target_: lib.dataset.depth_estimation.transform.Resize
+    #       ensure_multiple_of: 14
+    #       width: 1932
+    #       height: 1442
+    #       resize_target: False
+    #     - _target_: lib.dataset.depth_estimation.transform.Rotate
+    #     - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+  loader_opts:
+    - batch_size: 1
+    - batch_size: 1

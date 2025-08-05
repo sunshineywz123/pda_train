@@ -1,0 +1,25 @@
+#### Hardware configuration.
+# pool: a100-video
+cluster: sa129
+k8s_app_name: vilab
+k8s_priority: low
+node_num: 4
+communication_network_card: 'eth0'
+gpu_per_node: 8
+cpu_per_gpu: 12
+memory_per_gpu: 64G
+disk_memory: 200G
+shared_memory: 0  # 100G
+
+#### Running configuration.
+image: reg.docker.alibaba-inc.com/aii/aistudio:6960125-20240120011900
+runtime: pytorch
+gitlab_repo: pengsida.psd/pl_htcode
+gitlab_branch: master
+job_name: test_dpt
+job_id_cache_dir: /input/job_id_cache
+job_id_length: 32
+
+#### Command to execute remotely.
+command:
+    - ./experiments/test/test.sh

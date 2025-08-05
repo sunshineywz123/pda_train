@@ -1,0 +1,16 @@
+# @package _global_
+
+defaults:
+  - marigold/marigold
+  - override /data: dpt/hypersim_vkitti_disp
+exp_name: marigold_disp_comp_mskloss
+model:
+  pipeline:
+    args:
+      unet_opt:
+        config_dir: ${oc.env:workspace}/Marigold/checkpoint/Marigold_v1_merged_2/unet_comp_init # stable diffusion v2 unet
+      cond_sdpt: True
+      sdpt_msk_loss: True
+  
+
+

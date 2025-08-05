@@ -1,0 +1,14 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  val:
+    _target_: lib.dataset.mde.arkitscenes_byte.Dataset
+    data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+    meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+    split: 'val'
+    frames: [0, -1, 20]
+    depth_norm: 'nonorm'
+    tar_w: 768
+loader_opts:
+  val:
+    batch_size: 1
+    num_workers: 12

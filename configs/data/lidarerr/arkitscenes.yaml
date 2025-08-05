@@ -1,0 +1,45 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  train:
+    - _target_: lib.dataset.lidarerr.arkitscenes.Dataset
+      data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+      meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+      split: 'train'
+      depth_norm: 'nonorm'
+      frames: [0, -1, 1]
+      tar_w: 256
+      rotate: 'lr'
+    - _target_: lib.dataset.lidarerr.arkitscenes.Dataset
+      data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+      meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+      split: 'train'
+      depth_norm: 'nonorm'
+      frames: [0, -1, 1]
+      tar_w: 256
+      rotate: 'ud'
+  val:
+    _target_: lib.dataset.lidarerr.arkitscenes.Dataset
+    data_root: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling
+    meta_file: ${oc.env:workspace}/datasets/ARKitScenes/download/upsampling/metadata.csv
+    split: 'val'
+    frames: [0, -1, 20]
+    depth_norm: 'nonorm'
+    tar_w: 256
+    rotate: 'all'
+loader_opts:
+  train:
+    - batch_size: 4
+      num_workers: 2
+      shuffle: True
+      persistent_workers: True
+      drop_last: True
+    - batch_size: 4
+      num_workers: 2
+      shuffle: True
+      persistent_workers: True
+      drop_last: True
+  val:
+    batch_size: 1
+    num_workers: 8
+    shuffle: False
+    persistent_workers: True

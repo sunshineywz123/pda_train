@@ -1,0 +1,15 @@
+_target_: lib.datamodule.general_datamodule_v3.GeneralDataModule
+val_dataset:
+  dataset_opts:
+    _target_: lib.dataset.depth_estimation.kitti_completion.Dataset
+    data_root: ${oc.env:workspace}/datasets/kitti_completion
+    split_path: ${oc.env:workspace}/processed_datasets/kitti/val_split.json
+    split: 'val'
+    frames: [0, -1, 1]
+    transforms:
+      - _target_: lib.dataset.depth_estimation.transform.Resize
+        ensure_multiple_of: 14
+        height: 364
+        width: 1218
+      - _target_: lib.dataset.depth_estimation.transform.PrepareForNet
+      - _target_: lib.dataset.depth_estimation.transform.CompLowRes

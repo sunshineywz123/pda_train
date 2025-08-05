@@ -1,0 +1,19 @@
+_target_: lib.datamodule.general_datamodule_v2.GeneralDataModule
+dataset_opts:
+  val:
+    _target_: lib.dataset.mde.hypersim_val_byte.Dataset
+    data_root: ${oc.env:workspace}/hypersim
+    rgb_dir: ${oc.env:workspace}/datasets/HyperSim
+    dpt_dir: ${oc.env:workspace}/processed_datasets/HyperSim
+    split: test
+    scene: ai_001_010
+    cam: cam_00 
+    depth_norm: 'nonorm'
+    resize_ratio: 1.
+loader_opts:
+  train:
+    batch_size: 6
+    num_workers: 12
+  val:
+    batch_size: 1
+    num_workers: 12
