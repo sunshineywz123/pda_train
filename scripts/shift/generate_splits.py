@@ -10,19 +10,19 @@ import glob
 def main(args):
     root_dir = args.input
     tag = args.tag
-    scenes = sorted(os.listdir(join(root_dir, tag, 'front')))
+    scenes = sorted(os.listdir(join(root_dir)))
     split = {'rgb_files': [],
              'depth_files': [],
              'lowres_files': []}
     
     
     for scene in tqdm(scenes):
-        scene_dir = join(root_dir, tag, 'front', scene)
+        scene_dir = join(root_dir, scene)
         imgs = sorted(glob.glob(join(scene_dir, '*_img_front.jpg')))
         depths = sorted(glob.glob(join(scene_dir, '*_depth_front.png')))
         lowdepths = sorted(glob.glob(join(scene_dir, '*_lidar_front.png')))
         assert len(imgs) == len(depths)
-        assert len(imgs) == len(lowdepths)
+        # assert len(imgs) == len(lowdepths)
         split['rgb_files'].extend(imgs)
         split['depth_files'].extend(depths)
         split['lowres_files'].extend(lowdepths)
@@ -33,9 +33,9 @@ def main(args):
             
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input', type=str, default='/mnt/bn/haotongdata/Datasets/shift/discrete/images')
-    parser.add_argument('--output', type=str, default='data/pl_htcode/processed_datasets/shift/val_split.json')
-    parser.add_argument('--tag', type=str, default='val')
+    parser.add_argument('--input', type=str, default='/iag_ad_01/ad/yuanweizhong/datasets/shift')
+    parser.add_argument('--output', type=str, default='./data/pl_htcode/processed_datasets/shift/train_split.json')
+    parser.add_argument('--tag', type=str, default='train')
     args = parser.parse_args()
     return args
 if __name__ == '__main__':

@@ -30,7 +30,7 @@ output_dir: ${oc.env:workspace,'data/pl_htcode'}/outputs/${task}/${exp_name}
 ckpt_path: null
 ckpt_type: null
 seed: 42
-print_cfg: False
+print_cfg: True
 resume_training: True
 confirm_delete_previous_dir: False # 请小心使用
 
