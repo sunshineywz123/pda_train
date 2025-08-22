@@ -31,7 +31,7 @@ model:
     range_ratio: [1., 0., 0.] # 8x, 192x256, 8x--192x256
     block_type: 'featurefusiondepthblock'
     load_pretrain_backbone: null
-    load_pretrain_net: /iag_ad_01/ad/yuanweizhong/pda_train/checkpoints/e099-s200000.ckpt
+    load_pretrain_net: /iag_ad_01/ad/yuanweizhong/huzeyu/pda_train/checkpoints/e099-s200000.ckpt
     normalize_disp_type: minmax
     add_grad: True
     grad_tags: ['shift']

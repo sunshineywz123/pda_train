@@ -1,13 +1,20 @@
-from lib.dataset.depth_estimation.depth_estimation import Dataset as BaseDataset
-from lib.dataset.depth_estimation.depth_estimation import *
-from os.path import join
-import os
-from torchvision.transforms import Compose
 import json
-from copy import deepcopy
-from lib.utils.pylogger import Log
-from tqdm import tqdm
+import os
 import pickle
+from copy import deepcopy
+from os.path import join
+
+import cv2
+import numpy as np
+from torchvision.transforms import Compose
+from tqdm import tqdm
+
+from lib.dataset.depth_estimation.depth_estimation import \
+    Dataset as BaseDataset
+from lib.dataset.depth_estimation.depth_estimation import *
+from lib.utils.pylogger import Log
+
+
 class Dataset(BaseDataset):
     
     def build_metas(self):
@@ -27,84 +34,61 @@ class Dataset(BaseDataset):
         num = 5
         # num=-1
         for rgb_path,dpt_path in zip(rgb_paths[:num],dpt_paths[:num]):
-            # rgb_path=os.path.join('/iag_ad_01/ad/yuanweizhong/pda_train/', rgb_path)
-            # depth_path=os.path.join('/iag_ad_01/ad/yuanweizhong/pda_train/', dpt_path)
             if os.path.exists(rgb_path) and os.path.exists(dpt_path):
                 rgb_paths.append(rgb_path)
                 dpt_paths.append(dpt_path)
-                # occ_path = os.path.join('/home/nas/users/pangbo/pl_htcode/senseguide', sample_data['occ_path'])
-                # import pdb;pdb.set_trace()
-
-        # sample_data=data_infos['infos'][0]
-        # cam = sample_data['cams']['CAM_FRONT']
-        # rgb_path=os.path.join('/home/nas/users/pangbo/pl_htcode/senseguide', cam['cam_path'])
-        # rgb=cv2.imread(rgb_path)
-        # depth_path=os.path.join('/home/nas/users/pangbo/pl_htcode/senseguide', cam['depth_path'])
-        # depth_img = cv2.imread(depth_path, cv2.IMREAD_UNCHANGED)
-        # depth = depth_img[:,:,0] + (depth_img[:,:,1] * 256)
-
-        # splits = json.load(open(self.cfg.split_path))
-        # data_root = self.cfg.data_root
-        # rgb_paths = splits['rgb_files']
-        # dpt_paths = splits['depth_files']
-        # low_dpt_paths = splits['lowres_files']
-        
-        
-        # rgb_paths = [join(data_root, path) for path in tqdm(rgb_paths)]
-        # dpt_paths = [join(data_root, path) for path in tqdm(depth_paths)]
-        # low_dpt_paths = [join(data_root, path) for path in tqdm(low_depth_paths)]
 
         frame_len = len(rgb_paths) 
         frame_sample = self.cfg.get('frames', [0, -1, 1])
         frame_sample[1] =  frame_len if frame_sample[1] == -1 else frame_sample[1]
         
-        # rgb_paths = rgb_paths[frame_sample[0]:frame_sample[1]:frame_sample[2]]
-        # dpt_paths = dpt_paths[frame_sample[0]:frame_sample[1]:frame_sample[2]]
-        # low_dpt_paths = low_dpt_paths[frame_sample[0]:frame_sample[1]:frame_sample[2]]
-        
         self.rgb_files = rgb_paths
         self.depth_files = dpt_paths
         # self.low_files = low_dpt_paths
         # self.__DEPTH_C = np.array(1000.0 / (256 * 256 * 256 - 1), np.float32)
-    def read_rgb(self, index):
-        pass
 
-    def read_depth(self, index, depth=None):
+    def read_rgb(self, index):
+        rgb = cv2.imread(self.rgb_files[index],cv2.IMREAD_UNCHANGED)
+        return rgb
+
+    def read_depth(self, index,depth = None):
 
         depth_img = cv2.imread(self.depth_files[index], cv2.IMREAD_UNCHANGED)
-        depth = depth_img[:,:,0] + (depth_img[:,:,1] * 256)
-        # depth = depth_img[:,:]
-        depth = depth * 0.01
+        depth = depth_img[:,:,0] + (depth_img[:,:,1] * 256) + (depth_img[:,:,2] * 256 * 256)
+        depth = depth /16777216.0
+        depth = depth * 1000.0
 
-        valid_mask = (depth < 80.)
-        depth[~valid_mask] = 80.
+        # valid_mask = (depth < 80.)
+        # depth[~valid_mask] = 80.
 
         return depth, np.ones_like(depth).astype(np.uint8)
 
     
-    def read_low_depth(self, file, index=None):
-        return None
-        # depth = cv2.imread(file)
-        # depth = (depth[:, :, 0] * 256. * 256. + depth[:, :, 1] * 256. + depth[:, :, 2]) * self.__DEPTH_C
-        # ill_mask = (depth > 80.)
-        # depth[ill_mask] = 80.
-        # return depth
-        # import ipdb; ipdb.set_trace()
-        # depth = cv2.imread(file)
-        # depth = (depth[:, :, 0] * 256. * 256. + depth[:, :, 1] * 256. + depth[:, :, 2]) * self.__DEPTH_C
-        
-        # lidar_mask = (depth != 0.) & (depth < 80.)
-        # gt_depth, gt_mask = self.read_depth(index)
-        # # new_mask = gt_mask & lidar_mask
-        # output_depth = np.zeros_like(gt_depth)
-        # output_depth[lidar_mask] = gt_depth[lidar_mask]
-        # depth = cv2.imread(file, cv2.IMREAD_UNCHANGED)
-        # depth = (depth[:, :, 0] * 256. * 256. + depth[:, :, 1] * 256. + depth[:, :, 2]) * self.__DEPTH_C
-        # ixt = np.array([[640., 640.]])
-        
-        
-        # return output_depth
-    
+    def read_low_depth(self, file,index=None):
+        depth, _ = self.read_depth(index)
+
+        target_h, target_w = depth.shape[:2]
+        depth_lr = cv2.resize(depth, (target_w, target_h), interpolation=cv2.INTER_NEAREST)
+
+        stride = 16
+        anchors = []
+        for y in range(0, target_h, stride):
+            for x in range(0, target_w, stride):
+                dy = np.random.randint(-2, 3)
+                dx = np.random.randint(-2, 3)
+                yy = np.clip(y + dy, 0, target_h - 1)
+                xx = np.clip(x + dx, 0, target_w - 1)
+                anchors.append((yy, xx))
+        anchors = np.array(anchors)
+
+        # 只在 anchor 点保留真实深度，其余为0
+        sparse_depth = np.zeros((target_h, target_w), dtype=depth_lr.dtype)
+        sparse_depth[anchors[:,0], anchors[:,1]] = depth_lr[anchors[:,0], anchors[:,1]]
+
+        # 可视化
+        # depth_vis = cv2.normalize(sparse_depth, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+        # cv2.imwrite("decoded_depth_in_meters.png", depth_vis)
+
+        return sparse_depth
 
 # def generate_lidar_depth(depth, ixt, tar_lines = 64, reserve_ratio = 0.5):
-    

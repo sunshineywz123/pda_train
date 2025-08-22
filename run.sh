@@ -2,7 +2,8 @@
 source /root/miniconda3/bin/activate /iag_ad_01/ad/yuanweizhong/miniconda/promptda
 export workspace=data/pl_htcode
 export exp=aug_shift_comp_baseline_new_lidar_precomp_fov_sparse_lidar_minmax_min
-python3 main.py exp=depth_estimation/${exp} +data.train_loader_opts.num_workers=0
+python3 main.py exp=depth_estimation/${exp}
+# python3 -m ipdb main.py exp=depth_estimation/${exp}
 
 # python3 -m ptvsd --host 0.0.0.0 --port 5691 main.py exp=depth_estimation/${exp} +data.train_loader_opts.num_workers=0
 # python3 -m ptvsd --host 0.0.0.0 --port 5691 main.py exp=depth_estimation/${exp} entry=debug_cfg +data.train_loader_opts.num_workers=0

@@ -1,19 +1,22 @@
+import math
 import os
-from abc import ABC, abstractmethod
-import hydra
-from omegaconf import DictConfig
-import cv2
-import numpy as np
-import imageio
 import random
-from PIL import ImageFilter
+import time
+from abc import ABC, abstractmethod
+
+import cv2
+import h5py
+import hydra
+import imageio
+import numpy as np
 import torch
 import torch.nn.functional as F
-import math
-from lib.utils.pylogger import Log
-import time
-import h5py
+from omegaconf import DictConfig
+from PIL import ImageFilter
 from torchvision.transforms import Compose
+
+from lib.utils.pylogger import Log
+
 
 class Dataset(ABC):
     def __init__(self, **kwargs):
@@ -55,6 +58,7 @@ class Dataset(ABC):
         self.transform = Compose(transforms)
     
     def read_rgb(self, index):
+        # import ipdb; ipdb.set_trace()
         img_path = self.rgb_files[index]
         start_time = time.time()
         rgb = cv2.imread(img_path)
@@ -101,7 +105,10 @@ class Dataset(ABC):
         
         repeat_num = 0
         while True:
-            rgb, (dpt, msk) = self.read_rgb(index), self.read_depth(index)
+            # import ipdb; ipdb.set_trace()
+            # rgb, (dpt, msk) = self.read_rgb(index), self.read_depth(index)
+            rgb = self.read_rgb(index)
+            dpt,msk = self.read_depth(index)
             if dpt is not None:
                 self.check_shape(rgb, dpt)
                 # assert(rgb.shape[:2] == dpt.shape[:2]), "rgb.shape: {}, dpt.shape: {}".format(rgb.shape, dpt.shape)

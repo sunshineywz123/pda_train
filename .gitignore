@@ -200,3 +200,4 @@ inference/test/*.npy
 inference/test/*.npz
 lib/utils/body_model/seg_part_info.npy
 lib/utils/body_model/smpl_neutral_J_regressor.pt
+data/*
