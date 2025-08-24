@@ -62,11 +62,15 @@ def debug_train_dataloader(cfg: DictConfig) -> None:
     # trainer, model, datamodule = setup_trainer(cfg)
     datamodule = get_data(cfg)
     dataloader = datamodule.train_dataloader()
-    for data in tqdm(iter(dataloader)):
-        # print(data[0][0]['image_name'], data[0][0]['mask'].sum())
-        # print(data[0][1]['image_name'], data[0][1]['mask'].sum())
-        pass
-        # Log.info(data.keys())
+    # for data in tqdm(iter(dataloader)):
+    for data in dataloader:
+        Log.info(data.keys())
+        # import ipdb;ipdb.set_trace()
+        print(data['image_name'], data['mask'].sum())
+        print(data['image_name'], data['mask'].sum())
+        # import ipdb;ipdb.set_trace()
+        # pass
+        
 
 def debug_val_dataloader(cfg: DictConfig) -> None:
     """
@@ -75,9 +79,11 @@ def debug_val_dataloader(cfg: DictConfig) -> None:
     # trainer, model, datamodule = setup_trainer(cfg)
     datamodule = get_data(cfg, wo_train=True)
     dataloader = iter(datamodule.val_dataloader())
-    for data in tqdm(dataloader):
-        pass
-        # Log.info(data.keys())
+    # for data in tqdm(dataloader):
+    for data in dataloader:
+        # pass
+        Log.info(data.keys())
+        import ipdb;ipdb.set_trace()
         
 def debug_cfg(cfg: DictConfig) -> None:
     """

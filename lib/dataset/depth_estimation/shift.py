@@ -26,7 +26,7 @@ class Dataset(BaseDataset):
         # else:
         #     with open('/home/nas/users/pangbo/pl_htcode/senseguide/lightwheel_occ_infos_val.pkl','rb') as f: data_infos= pickle.load(f)
 
-        with open ('/iag_ad_01/ad/yuanweizhong/pda_train/data/pl_htcode/processed_datasets/shift/train_split.json') as f :
+        with open ('/iag_ad_01/ad/yuanweizhong/huzeyu/pda_train/data/pl_htcode/processed_datasets/shift/train_split.json') as f :
             data_infos = json.load(f)
 
         rgb_paths=data_infos['rgb_files']
@@ -48,19 +48,21 @@ class Dataset(BaseDataset):
         # self.__DEPTH_C = np.array(1000.0 / (256 * 256 * 256 - 1), np.float32)
 
     def read_rgb(self, index):
-        rgb = cv2.imread(self.rgb_files[index],cv2.IMREAD_UNCHANGED)
+        rgb = cv2.imread(self.rgb_files[index])
+        rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
+        rgb = np.asarray(rgb / 255.).astype(np.float32)
         return rgb
 
     def read_depth(self, index,depth = None):
-
         depth_img = cv2.imread(self.depth_files[index], cv2.IMREAD_UNCHANGED)
-        depth = depth_img[:,:,0] + (depth_img[:,:,1] * 256) + (depth_img[:,:,2] * 256 * 256)
+        depth = depth_img[:,:,0].astype(np.float32) + \
+                (depth_img[:,:,1].astype(np.float32) * 256) + \
+                (depth_img[:,:,2].astype(np.float32) * 256 * 256)
         depth = depth /16777216.0
-        depth = depth * 1000.0
+        # depth = depth * 1000.0
 
         # valid_mask = (depth < 80.)
         # depth[~valid_mask] = 80.
-
         return depth, np.ones_like(depth).astype(np.uint8)
 
     
@@ -86,9 +88,8 @@ class Dataset(BaseDataset):
         sparse_depth[anchors[:,0], anchors[:,1]] = depth_lr[anchors[:,0], anchors[:,1]]
 
         # 可视化
-        # depth_vis = cv2.normalize(sparse_depth, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-        # cv2.imwrite("decoded_depth_in_meters.png", depth_vis)
-
+        depth_vis = cv2.normalize(sparse_depth, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+        cv2.imwrite("decoded_depth_in_meters.png", depth_vis)
         return sparse_depth
 
 # def generate_lidar_depth(depth, ixt, tar_lines = 64, reserve_ratio = 0.5):

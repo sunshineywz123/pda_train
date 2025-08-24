@@ -1,11 +1,15 @@
+import os
+
 import hydra
+import ptvsd
 import pytorch_lightning as pl
 from omegaconf import DictConfig
+
+from lib.entrys.utils import (delete_output_dir, get_callbacks, get_data,
+                              get_model, print_cfg)
+from lib.utils.net_utils import find_last_ckpt_path, load_pretrained_model
 from lib.utils.pylogger import Log
-from lib.utils.net_utils import load_pretrained_model, find_last_ckpt_path
-from lib.entrys.utils import get_data, get_model, get_callbacks, print_cfg, delete_output_dir
-import os
-import ptvsd
+
 if 0:
     ptvsd.enable_attach(address=('0.0.0.0', 5691))
 
