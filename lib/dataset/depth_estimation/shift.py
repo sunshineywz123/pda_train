@@ -13,7 +13,7 @@ from lib.dataset.depth_estimation.depth_estimation import \
     Dataset as BaseDataset
 from lib.dataset.depth_estimation.depth_estimation import *
 from lib.utils.pylogger import Log
-
+from PIL import Image
 
 class Dataset(BaseDataset):
     
@@ -54,12 +54,15 @@ class Dataset(BaseDataset):
         return rgb
 
     def read_depth(self, index,depth = None):
-        depth_img = cv2.imread(self.depth_files[index], cv2.IMREAD_UNCHANGED)
-        depth = depth_img[:,:,0].astype(np.float32) + \
-                (depth_img[:,:,1].astype(np.float32) * 256) + \
-                (depth_img[:,:,2].astype(np.float32) * 256 * 256)
+        # depth_img = cv2.imread(self.depth_files[index], cv2.IMREAD_UNCHANGED)
+        depth_img = Image.open(self.depth_files[index])
+        depth_img = np.array(depth_img).astype(np.float64)
+        depth = depth_img[:,:,0] + \
+                (depth_img[:,:,1] * 256) + \
+                (depth_img[:,:,2] * 256 * 256)
+        # depth = depth /16777216.0
         depth = depth /16777216.0
-        # depth = depth * 1000.0
+        depth = depth * 1000.0
 
         # valid_mask = (depth < 80.)
         # depth[~valid_mask] = 80.

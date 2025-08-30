@@ -12,7 +12,7 @@ from lib.utils.dpt.eval_utils import recover_metric_depth, recover_metric_depth_
 from lib.utils.parallel_utils import async_call
 from lib.utils.pylogger import Log
 from lib.utils.vis_utils import colorize_depth_maps
-
+import boxx
 
 class DepthEstimationModel(Model):
     def __init__(
@@ -82,6 +82,7 @@ class DepthEstimationModel(Model):
             lowres_depth = batch['sparse_depth'] if 'sparse_depth' in batch else None
             lowres_depth = batch['lowres_depth'] if 'lowres_depth' in batch and lowres_depth is None else lowres_depth
             self.save_vis_depth(output['depth'], batch['image'], batch['image_name'], 'vis_depth', gt_depth=batch['depth'] if 'depth' in batch else None, lowres_depth=lowres_depth)
+            self.save_vis_depth(batch['depth'], batch['image'], batch['image_name'], 'vis_depth_gt', gt_depth=batch['depth'] if 'depth' in batch else None, lowres_depth=batch['lowres_depth'] if 'lowres_depth' in batch else lowres_depth)
         if self._save_depth_mesh and 'disp' not in output:
             self.save_depth_mesh(output['depth'], batch['image'], batch['image_name'], 'pointcloud')
         if self._save_gt_depth_mesh:

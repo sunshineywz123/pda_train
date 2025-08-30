@@ -56,4 +56,4 @@ val_dataset:
         min_pitch: -0.075
       - _target_: lib.dataset.depth_estimation.transform.CompLowRes
 train_loader_opts:
-  batch_size: 1
+  batch_size: 16

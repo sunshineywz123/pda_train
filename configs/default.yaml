@@ -39,5 +39,6 @@ pl_trainer:
   devices: 1
   num_nodes: 1
   num_sanity_val_steps: 0 # disable sanity check
+  # val_check_interval: 1
 
 logger: null

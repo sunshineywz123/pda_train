@@ -187,27 +187,27 @@ class CompLowRes(object):
 
     def __call__(self, sample):
         try:
-            rgb = np.transpose(sample['image'], (1, 2, 0))
-            gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
-            lowres_depth = sample['lowres_depth'][0]
-            if (lowres_depth != 0).sum() <= 10:
-                sample['lowres_depth'] = cv2_resize(sample['depth'][0], (lowres_depth.shape[1], lowres_depth.shape[0]), interpolation=cv2.INTER_LINEAR)
-                return sample
+            rgb = np.transpose(sample['image'], (1, 2, 0))  # 将图像从CHW格式转换为HWC格式
+            gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)    # 将RGB图像转换为灰度图像
+            lowres_depth = sample['lowres_depth'][0]        # 获取低分辨率深度图的第一个通道
+            if (lowres_depth != 0).sum() <= 10:             # 如果低分辨率深度图中非零像素点小于等于10
+                sample['lowres_depth'] = cv2_resize(sample['depth'][0], (lowres_depth.shape[1], lowres_depth.shape[0]), interpolation=cv2.INTER_LINEAR)  # 用原始深度图resize填充
+                return sample                               # 返回处理后的sample
             
-            if gray.shape[0] != lowres_depth.shape[0] or gray.shape[1] != lowres_depth.shape[1]:
-                gray = cv2.resize(gray, (lowres_depth.shape[1], lowres_depth.shape[0]), interpolation=cv2.INTER_LINEAR)
+            if gray.shape[0] != lowres_depth.shape[0] or gray.shape[1] != lowres_depth.shape[1]:  # 如果灰度图和低分辨率深度图的尺寸不一致
+                gray = cv2.resize(gray, (lowres_depth.shape[1], lowres_depth.shape[0]), interpolation=cv2.INTER_LINEAR)  # 将灰度图resize到低分辨率深度图的尺寸
             sparse_depth = interp_depth_rgb(
-                lowres_depth,
-                gray,
-                speed=5,
-                k = 4
+                lowres_depth,                               # 输入低分辨率深度图
+                gray,                                      # 输入灰度图
+                speed=5,                                   # 插值速度参数
+                k = 4                                      # 最近邻点数参数
             )
-            if rgb.shape[0] < sparse_depth.shape[0] or rgb.shape[1] < sparse_depth.shape[1]:
-                sparse_depth = cv2.resize(sparse_depth, (rgb.shape[1], rgb.shape[0]), interpolation=cv2.INTER_LINEAR)
+            if rgb.shape[0] < sparse_depth.shape[0] or rgb.shape[1] < sparse_depth.shape[1]:  # 如果原始图像尺寸小于插值后的深度图
+                sparse_depth = cv2.resize(sparse_depth, (rgb.shape[1], rgb.shape[0]), interpolation=cv2.INTER_LINEAR)  # 将插值后的深度图resize到原始图像尺寸
             # import ipdb; ipdb.set_trace()
             # bi_sparse_depth = bilateralFilter(gray, 5, 0.01, 50., sparse_depth)
-            sample['lowres_depth'] = sparse_depth[None]
-            sample['sparse_depth'] = lowres_depth[None]
+            sample['lowres_depth'] = sparse_depth[None]  # 将插值后的稀疏深度图增加一个维度后赋值给sample的'lowres_depth'键 ##knn差值后的深度
+            sample['sparse_depth'] = lowres_depth[None]  # 将原始低分辨率深度图增加一个维度后赋值给sample的'sparse_depth'键 ##lidar稀疏深度
         except:
             import ipdb; ipdb.set_trace()
         return sample

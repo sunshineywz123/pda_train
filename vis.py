@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 
 # 读取 PNG 图像
-img = Image.open("/iag_ad_01/ad/yuanweizhong/datasets/shift/0a03-8855/00000000_depth_front.png")
+img = cv2.imread("/iag_ad_01/ad/yuanweizhong/datasets/vkitti/Scene02/morning/frames/depth/Camera_0/depth_00000.png", cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH)
 img = np.array(img).astype(np.uint32)
 
 # 解码为整数深度值
@@ -12,6 +12,7 @@ img = np.array(img).astype(np.uint32)
 depth_raw = img
 
 # 转换为米
+depth_meters = depth_raw / 100.0
 depth_meters = depth_raw.astype(np.float32) 
 
 # 可视化保存（仅用于显示）

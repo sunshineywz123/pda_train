@@ -11,7 +11,7 @@ import functools
 
 from .blocks import FeatureFusionBlock, FeatureFusionDepthBlock, _make_scratch
 from .loss import L1loss_Gradient_upsample, TrimmedProcrustesLoss
-
+import boxx
 def _make_fusion_block(features, use_bn, size = None, block_type = 'featurefusionblock'):
     blocks = {'featurefusionblock': FeatureFusionBlock, 'featurefusiondepthblock': FeatureFusionDepthBlock}
     return blocks[block_type](
@@ -152,6 +152,15 @@ class DPTHead(nn.Module):
         out_feat = F.interpolate(out, (int(patch_h * 14), int(patch_w * 14)), mode="bilinear", align_corners=True)
         out = self.scratch.output_conv2(out_feat)
         
+        # x=out_feat
+        # x = self.scratch.output_conv2[0](x)  # Conv2d
+        # x = self.scratch.output_conv2[1](x)  # ReLU
+        # conv_output = self.scratch.output_conv2[2](x)  # Conv2d(1x1)
+        # final_output = self.scratch.output_conv2[3](conv_output)  # act_func
+        # Log.warn('conv_output')
+        # boxx.loga(conv_output)
+        # Log.warn('final_output')
+        # boxx.loga(final_output)
         if return_feat:
             out_feat = get_intermediate_features(out_feat, self.scratch.output_conv2, 0)
             return out, out_feat

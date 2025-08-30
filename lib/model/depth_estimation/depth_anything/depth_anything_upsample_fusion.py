@@ -180,9 +180,10 @@ class DepthAnythingPipeline(BaseModel):
         
         if resize and 'depth' in batch and depth.shape[2:] != batch['depth'].shape[2:]:
             depth = F.interpolate(depth, batch['depth'].shape[2:], mode='bilinear', align_corners=False)
-        
-        if not training:
-            depth = self.warp_func.unwarp(depth, reference=lowres_depth)    
+        # change:yuanweizhong
+        depth = self.warp_func.unwarp(depth, reference=lowres_depth)
+        # if not training:
+        #     depth = self.warp_func.unwarp(depth, reference=lowres_depth)    
         # if not training and self._normalize_disp_type != 'nonorm':
         #     # unwarp
         #     if isinstance(depth_min, float): depth = depth * (depth_max - depth_min) + depth_min
